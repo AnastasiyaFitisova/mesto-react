@@ -71,6 +71,7 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
                 key={card._id}
                 src={card.link}
                 name={card.name}
+                likes={card.likes}
                 onCardClick={onCardClick}
               />
             )
