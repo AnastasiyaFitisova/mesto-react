@@ -1,26 +1,13 @@
 import React from 'react';
 import api from '../utils/Api.js';
 import Card from './Card.js';
+import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 
 function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
 
-  const [userName, setUserName] = React.useState('');
-  const [userDescription, setUserDescription] = React.useState('');
-  const [userAvatar, setUserAvatar] = React.useState('');
-  const [cards, setCards] = React.useState([]);
+  const currentUser = React.useContext(CurrentUserContext);
 
-  React.useEffect(() => {
-    api.getUserInfo()
-      .then((res) => {
-        setUserName(res.name);
-        setUserDescription(res.about);
-        setUserAvatar(res.avatar);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-  }, []
-  );
+  const [cards, setCards] = React.useState([]);
 
   React.useEffect(() => {
     api.getInitialCards()
@@ -33,12 +20,34 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
   }, []
   );
 
+  function handleCardLike(card) {
+    const isLiked = card.likes.some(i => i._id === currentUser._id);
+
+    api.changeLikeCardStatus(card._id, !isLiked)
+    .then((newCard) => {
+      setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  };
+
+  function handleCardDelete(card) {
+    api.deleteCard(card._id)
+    .then(() => {
+      setCards((state) => state.filter((d) => d._id !== card._id));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  };
+
   return (
     <main className="content">
       <section className="profile">
         <div className="profile__avatar-section">
           <img className="profile__avatar"
-            src={userAvatar}
+            src={currentUser.avatar}
             alt="фото профиля"
           />
           <div className="profile__overlay"
@@ -46,14 +55,14 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
         </div>
         <div className="profile__info">
           <div className="profile__container">
-            <h1 className="profile__name">{userName}</h1>
+            <h1 className="profile__name">{currentUser.name}</h1>
             <button className="profile__set-button"
               aria-label="Редактировать профиль"
               type="button"
               onClick={onEditProfile}>
             </button>
           </div>
-          <p className="profile__position">{userDescription}</p>
+          <p className="profile__position">{currentUser.about}</p>
         </div>
         <button className="profile__add-button"
           aria-label="Добавить место"
@@ -69,10 +78,10 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
             return (
               <Card
                 key={card._id}
-                src={card.link}
-                name={card.name}
-                likes={card.likes}
+                card={card}
                 onCardClick={onCardClick}
+                onCardLike={handleCardLike}
+                onCardDelete={handleCardDelete}
               />
             )
           }

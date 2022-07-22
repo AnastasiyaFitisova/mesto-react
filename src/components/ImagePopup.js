@@ -5,7 +5,7 @@ function ImagePopup({card, onClose}) {
     <div className={`popup popup_img-view ${card ? "popup_activated" : ""}`}>
       <div className="popup__container">
         <img className="popup__image"
-          src={card ? card.src : ""}
+          src={card ? card.link : ""}
           alt={card ? card.name : ""}
         />
         <p className="popup__place-description">{card ? card.name : ""}</p>
