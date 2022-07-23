@@ -1,31 +1,33 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm.js';
-import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
+import { CurrentUserContext } from '../contexts/CurrentUserContext.js'
 
-function EditProfilePopup({isOpen, onClose, onUpdateUser}) {
+function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
 
   const currentUser = React.useContext(CurrentUserContext);
-  
-  React.useEffect(() => {
-    setName(currentUser.name);
-    setDescription(currentUser.about);
-  }, [currentUser]);
-
   const [name, setName] = React.useState('');
   const [description, setDescription] = React.useState('');
 
+  React.useEffect(() => {
+    if (currentUser) {
+      setName(currentUser.name);
+      setDescription(currentUser.about);
+    }
+  }, [currentUser]);
+
+
   function handleNameChange(evt) {
-    setName(evt.target.value)
+    setName(evt.target.value);
   };
 
   function handleDescriptionChange(evt) {
-    setDescription(evt.target.value)
+    setDescription(evt.target.value);
   };
- 
+
   function handleSubmit(evt) {
     evt.preventDefault();
-    onUpdateUser({name, about: description});
-  } 
+    onUpdateUser({ name, about: description });
+  };
 
   return (
     <PopupWithForm
@@ -68,7 +70,6 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser}) {
         </span>
       </div>
     </PopupWithForm>
-
   );
 };
 
