@@ -19,6 +19,11 @@ function AddPlacePopup({ isOpen, onClose, onUpdatePlace }) {
     onUpdatePlace({name, link});
   };
 
+  React.useEffect(() => {
+    setName('');
+    setLink('');
+  }, [isOpen]);
+
   return (
     <PopupWithForm
       name="add-card"

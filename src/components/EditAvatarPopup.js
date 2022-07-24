@@ -10,7 +10,11 @@ function EditAvatarPopup({isOpen, onClose, onUpdateAvatar}) {
     onUpdateAvatar({
       avatar: inputLink.current.value
     });
-  }
+  };
+
+  React.useEffect(() => {
+    inputLink.current.value='';
+  }, [isOpen]);
 
   return (
     <PopupWithForm
